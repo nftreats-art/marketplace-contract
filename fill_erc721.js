@@ -52,7 +52,7 @@ let utils = require("./utils");
     taker3,
     taker5,
   ] = await web3Wrapper.getAvailableAddressesAsync();
-  const erc20contract = "0xDA2aa92c55526541f342437CD1c7F2a525625425".toLowerCase();
+  const erc20contract = "0xd704882c9ACE7d6780eC2BBa3ED6ADE312406454".toLowerCase();
   const erc721contract = "0x5d9a43c211f444c98883e983774ad04b42eba83b".toLowerCase();
   const makerAssetAmount = new BigNumber(1);
   const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
