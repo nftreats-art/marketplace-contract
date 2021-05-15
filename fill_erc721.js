@@ -46,8 +46,8 @@ let utils = require("./utils");
   });
   const web3Wrapper = new Web3Wrapper(providerEngine());
   const [
-    taker,
     maker,
+    taker,
     taker2,
     taker3,
     taker5,
@@ -89,13 +89,13 @@ let utils = require("./utils");
     .callAsync();
   console.log(allowance);
 
-   /*const takerTestBApprovalTxHash = await erc20Token
+   const takerTestBApprovalTxHash = await erc20Token
      .approve(
        contractWrappers.contractAddresses.erc20Proxy,
        UNLIMITED_ALLOWANCE_IN_BASE_UNITS
      )
      .sendTransactionAsync({ from: taker, gas: 8000000 });
-   console.log(takerTestBApprovalTxHash);*/
+   console.log(takerTestBApprovalTxHash);
 
   // Set up the Order and fill it
   const randomExpiration = utils.getRandomFutureDateInSeconds();
