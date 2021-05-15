@@ -10,7 +10,7 @@ let {
   signatureUtils,
 } = require("@0x/order-utils");
 let { BigNumber } = require("@0x/utils");
-let { NETWORK_CONFIGS } = require("./configs");
+//let { NETWORK_CONFIGS } = require("./configs");
 let { exchangeDataEncoder } = require("@0x/contracts-exchange");
 let {
   DECIMALS,
@@ -24,43 +24,60 @@ let utils = require("./utils");
 
 (async () => {
   const contractWrappers = new ContractWrappers(providerEngine(), {
-    chainId: NETWORK_CONFIGS.chainId,
+    chainId: 80001,
+    contractAddresses: {
+      erc20Proxy: "0x0b47076aaa5246411458fcf85494f41bbfdb8470",
+      erc721Proxy: "0xff7ca10af37178bdd056628ef42fd7f799fac77c",
+      erc1155Proxy: "0x53d791f18155c211ff8b58671d0f7e9b50e596ad",
+      zrxToken: "0x5af2b282779c7d4ffc69ca4e6e16676747f5c56b",
+      etherToken: "0x5b5e11e4818cceba3e82ca9b97cd0ab80be75ad3",
+      exchange: "0x533dc89624dcc012c7323b41f286bd2df478800b",
+      erc20BridgeProxy: "0x5638a4b19f121adc4436de3f0e845173b33b594c",
+      forwarder: "0x6dcf02d3a963f22dbf85c4025b86a834fef16c15",
+      coordinatorRegistry: "0x6f5b9e0456c4849224c7b59dc15f05c48641c4e3",
+      coordinator: "0x6669d66979f729445826fee33021090599ad7bd2",
+      multiAssetProxy: "0x14f346789675cea7ac3aefd9a5522649c305331b",
+      staticCallProxy: "0x4338ef5217239aa2096e83fdba729d782da46790",
+      devUtils: "0x7a2d89c4cb4b28b9cef9f269d48b3aecf0f549b7",
+      zrxVault: "0xe01ac7c9eb19c63b063134ed2bb5eb7dcc847be9",
+      staking: "0x68ec2c09eb634ae0fdbf023c0127c5f4bf3dd92d",
+      stakingProxy: "0xb0da4ecb2f7cba700e49c1161bd229cd7c75929e"
+    }
   });
   const web3Wrapper = new Web3Wrapper(providerEngine());
   const [
+    taker,
     maker,
     taker2,
-    taker,
-    taker4,
+    taker3,
     taker5,
   ] = await web3Wrapper.getAvailableAddressesAsync();
-  const TestBTokenAddress = "0xd393b1E02dA9831Ff419e22eA105aAe4c47E1253".toLowerCase();
-  const TestCTokenAddress = "0xb5eEF11c0b188E9C020254E83E3399b82C62BDdb".toLowerCase();
+  const erc20contract = "0xDA2aa92c55526541f342437CD1c7F2a525625425".toLowerCase();
+  const erc721contract = "0x5d9a43c211f444c98883e983774ad04b42eba83b".toLowerCase();
   const makerAssetAmount = new BigNumber(1);
   const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
-    new BigNumber(0.0000000001),
+    new BigNumber(0.1),
     DECIMALS
   );
 
   const makerAssetData = await contractWrappers.devUtils
-    .encodeERC1155AssetData(
-      TestCTokenAddress,
-      [new BigNumber("10")],
-      [new BigNumber("10")],
-      "0x"
+    .encodeERC721AssetData(
+      erc721contract,
+      new BigNumber("5"),
     )
     .callAsync();
 
-    
+
+  console.log(makerAssetData);
   const takerAssetData = await contractWrappers.devUtils
-    .encodeERC20AssetData(TestBTokenAddress)
+    .encodeERC20AssetData(erc20contract)
     .callAsync();
 
   let txHash;
 
   // ERC20
   const erc20Token = new ERC20TokenContract(
-    TestBTokenAddress,
+    erc20contract,
     providerEngine()
   );
 
@@ -72,13 +89,13 @@ let utils = require("./utils");
     .callAsync();
   console.log(allowance);
 
-  // const takerTestBApprovalTxHash = await erc20Token
-  //   .approve(
-  //     contractWrappers.contractAddresses.erc20Proxy,
-  //     UNLIMITED_ALLOWANCE_IN_BASE_UNITS
-  //   )
-  //   .sendTransactionAsync({ from: taker, gas: 8000000 });
-  // console.log(takerTestBApprovalTxHash);
+   /*const takerTestBApprovalTxHash = await erc20Token
+     .approve(
+       contractWrappers.contractAddresses.erc20Proxy,
+       UNLIMITED_ALLOWANCE_IN_BASE_UNITS
+     )
+     .sendTransactionAsync({ from: taker, gas: 8000000 });
+   console.log(takerTestBApprovalTxHash);*/
 
   // Set up the Order and fill it
   const randomExpiration = utils.getRandomFutureDateInSeconds();
@@ -86,11 +103,11 @@ let utils = require("./utils");
 
   // Create the order
   const order = {
-    chainId: NETWORK_CONFIGS.chainId,
+    chainId: 80001,
     exchangeAddress,
     makerAddress: maker,
     takerAddress: NULL_ADDRESS,
-    senderAddress: taker4,
+    senderAddress: '0x0000000000000000000000000000000000000000',
     feeRecipientAddress: NULL_ADDRESS,
     expirationTimeSeconds: parseInt(randomExpiration) + 1000000000,
     salt: generatePseudoRandomSalt(),
@@ -153,7 +170,7 @@ let utils = require("./utils");
   txHash = await contractWrappers.exchange
     .executeTransaction(takerSign, takerSign.signature)
     .awaitTransactionSuccessAsync({
-      from: taker4,
+      from: taker,
       gas: 8000000,
       gasPrice: 10000000000,
       value: utils.calculateProtocolFee([signedOrder]),

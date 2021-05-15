@@ -1,5 +1,5 @@
 let { BigNumber } = require("@0x/utils");
-let { TX_DEFAULTS } = require("./configs");
+//let { TX_DEFAULTS } = require("./configs");
 let { ONE_SECOND_MS, TEN_MINUTES_MS } = require("./constants");
 
 const getRandomFutureDateInSeconds = () => {
@@ -8,7 +8,7 @@ const getRandomFutureDateInSeconds = () => {
     .integerValue(BigNumber.ROUND_CEIL);
 };
 
-const calculateProtocolFee = (orders, gasPrice = TX_DEFAULTS.gasPrice) => {
+const calculateProtocolFee = (orders, gasPrice = 10000000000) => {
   return new BigNumber(150000).times(gasPrice).times(orders.length);
 };
 1500000000000000;
